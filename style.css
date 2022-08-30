@@ -29,7 +29,6 @@ body {
   }
    
 
-
   .button:hover {
     border: 3px solid #ebe7ec; 
     -webkit-transition: all .15s ease-in-out;
