@@ -1,5 +1,5 @@
 body {
-  background-image: url("https://media2.giphy.com/media/MXQnyEQwBJ6eTj90L5/giphy.gif?cid=ecf05e474mtiu9qjywjnbklkmdida74r4bv1l2zh625estsj&rid=giphy.gif&ct=g");
+  background-image: url("https://cutewallpaper.org/21/space-wallpaper-gif/1920x1080-Wallpaper-Gifs-Keysinspectorinc.com.gif");
     background-color: #000;
     
    }
@@ -12,6 +12,7 @@ body {
   h1 {
     color: #ebe7ec;
     text-align: center;
+    text-decoration: underline;
   }
 
   .button {
@@ -24,6 +25,7 @@ body {
     font-size: 16px;
     margin: 4px 2px;
     cursor: pointer;
+    text-decoration: none;
   }
    
 
@@ -36,5 +38,5 @@ body {
     box-shadow: 0 0 10px 0 #ebe7ec inset, 
     0 0 20px 2px #ebe7ec;
     background-color: rgba(240, 248, 255, 0);
-
+    
   }
