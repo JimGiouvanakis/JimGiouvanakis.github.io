@@ -1,86 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title></title>
-    <link rel="stylesheet" type="text/css" href="styles.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
-    <link rel="icon" type="image/x-icon" href="./assets/favico/default.ico" />
-  </head>
-  <body class="custom-cursor">
-    <!-- Terminal Window -->
-    <div id="terminal" class="custom-cursor">
-      <div id="terminal-header">
-        <div id="terminal-buttons">
-          <!-- Terminal Control Buttons -->
-          <div class="terminal-button" id="close-button"></div>
-          <!-- Close button -->
-          <div class="terminal-button" id="minimize-button"></div>
-          <!-- Minimize button -->
-          <div class="terminal-button" id="maximize-button"></div>
-          <!-- Maximize button -->
-        </div>
-      </div>
-      <div id="terminal-content">
-        <p id="terminal-text"></p>
-        <!-- Terminal text content -->
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title></title>
+  <link rel="stylesheet" type="text/css" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/x-icon" href="./assets/favico/default.ico" />
+</head>
+
+<body class="custom-cursor">
+  <!-- Terminal / Profile Window -->
+  <div id="terminal" class="custom-cursor">
+    <div id="terminal-header">
+      <div id="terminal-buttons">
+        <!-- Terminal Control Buttons -->
+        <div class="terminal-button" id="close-button"></div>
+        <!-- Close button -->
+        <div class="terminal-button" id="minimize-button"></div>
+        <!-- Minimize button -->
+        <div class="terminal-button" id="maximize-button"></div>
+        <!-- Maximize button -->
       </div>
     </div>
-    <!-- Background Elements -->
-    <div id="video-background">
-      <video autoplay muted loop id="myVideo">
-        <!-- Video background -->
-        <source src="./assets/back/default.mp4" type="video/mp4" />
-        Your browser does not support HTML5 video.
-      </video>
-      <!-- <div id="audio-background"> -->
-      <!-- <audio autoplay loop id="myAudio"> -->
-      <!-- Audio background -->
-      <!-- <source src="./assets/music/default.mp3" type="audio/mpeg" /> -->
-      <!-- Your browser does not support the audio element. -->
-      <!-- </audio> -->
-      <!-- </div> -->
-      <div id="blurred-box">
-        <img
-          id="profile-picture"
-          src="./assets/avatarIcon/memoji1.jpg"
-          alt="Profile Picture"
-        />
-        <img id="avatar-frame" src="" alt="Avatar Frame" />
-        <p
-          id="username"
-          style="color: white; font-weight: bold; font-size: large"
-        >
-          Dimitris Giouvanakis
-        </p>
-        <!-- Username -->
-        <!-- User Description -->
-        <div class="user-description">
-          <p id="user-description" style="color: white">iOS Developer</p>
+    <div id="terminal-content">
+      <!-- Boot / typewriter screen -->
+      <p id="terminal-text"></p>
+      <p id="terminal-hint">press Enter or click to continue</p>
+
+      <!-- Profile screen (revealed in the same window after boot) -->
+      <div id="profile-view">
+        <div id="avatar-ring">
+          <img id="profile-picture" src="./assets/avatarIcon/memoji1.PNG" alt="Profile Picture" />
         </div>
-        <!-- Links -->
+        <p id="profile-name">Dimitris Giouvanakis</p>
+        <p id="profile-role">iOS Developer</p>
+        <p id="profile-bio">
+          iOS Developer at Arx.net, building app features end-to-end with
+          SwiftUI &amp; UIKit — from UI implementation to API integration.
+          Computer, Informatics &amp; Telecommunications Engineering
+          graduate, previously worked as a SAP ABAP Developer at Deloitte.
+          I also build personal projects on the side — check them out on
+          my GitHub!
+        </p>
         <div class="links">
-          <a href="https://soundcloud.com/nightyouth1337" target="_blank">
-            <i class="fab fa-soundcloud"></i>
-          </a>
-          <a href="https://github.com/JimGiouvanakis" target="_blank">
+          <a href="https://github.com/JimGiouvanakis" target="_blank" title="GitHub">
             <i class="fab fa-github"></i>
           </a>
-          <a href="https://www.paypal.com/paypalme/lilpeepvb1" target="_blank">
-            <i class="fa-brands fa-paypal"></i>
+          <a href="https://www.linkedin.com/in/dimitris-giouvanakis-7a6438240/" target="_blank" title="LinkedIn">
+            <i class="fab fa-linkedin"></i>
+          </a>
+          <a href="mailto:dimigiou99@gmail.com" title="Email">
+            <i class="fa-solid fa-envelope"></i>
           </a>
         </div>
       </div>
     </div>
-    <script src="./assets/js/script.js"></script>
-    <!-- Script for functionality -->
-    <script src="./assets/js/title.js"></script>
-    <!-- Script for title functionality -->
-    <script src="./assets/js/discord.js"></script>
-    <!-- Script for discord functionality -->
-  </body>
+  </div>
+  <!-- Background Elements -->
+  <div id="video-background">
+    <video autoplay muted loop id="myVideo">
+      <!-- Video background -->
+      <source src="./assets/back/default.mp4" type="video/mp4" />
+      Your browser does not support HTML5 video.
+    </video>
+  </div>
+  <script src="./script.js"></script>
+  <!-- Script for functionality -->
+  <script src="./title.js"></script>
+  <!-- Script for title functionality -->
+</body>
+
 </html>

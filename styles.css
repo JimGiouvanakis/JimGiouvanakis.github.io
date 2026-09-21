@@ -1,52 +1,88 @@
 /* Reset default styles */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
   overflow: hidden; /* Hide overflow to prevent scrolling */
   background-color: black; /* Set background color to black */
 }
 
 /* Define custom cursor */
 .custom-cursor {
-  cursor: url('./assets/cursor/pointer.png'), auto !important;
+  cursor: url("./assets/cursor/pointer.png"), auto !important;
 }
 
-/* Terminal styles */
+/* ===================== Terminal / Profile window ===================== */
 #terminal {
   position: fixed; /* Fixed position to keep it always visible */
-  top: 50px; /* Adjust initial top position as needed */
-  left: 50px; /* Adjust initial left position as needed */
-  width: 600px; /* Fixed width */
-  height: 400px; /* Fixed height */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 760px; /* Fixed width during boot */
+  height: 520px; /* Fixed height during boot */
   background-color: #1e1e1e; /* Terminal background color */
   color: #ffffff; /* Terminal text color */
-  border-radius: 10px; /* Rounded corners */
+  border-radius: 14px; /* Rounded corners */
   z-index: 1000; /* Ensure it's above other elements */
   border: 2px solid #4d4d4d; /* Terminal border color */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* Terminal shadow */
+  max-width: 92vw;
+  max-height: 92vh;
+  overflow: hidden;
+  transition:
+    width 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.6s ease,
+    border-color 0.6s ease,
+    box-shadow 0.6s ease;
+}
+
+/* Profile mode: same window, grey / frosted glass look */
+#terminal.profile-mode {
+  width: 660px;
+  height: 900px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.55);
 }
 
 @media screen and (max-width: 600px) {
   /* Adjust styles for smaller screens, such as phones */
   #terminal {
-      max-width: 90%; /* Increase width for smaller screens */
+    max-width: 90%; /* Increase width for smaller screens */
   }
 }
+
 /* Terminal header styles */
 #terminal-header {
   background-color: #2d2d2d; /* Header background color */
-  border-top-left-radius: 10px; /* Rounded corners for top left */
-  border-top-right-radius: 10px; /* Rounded corners for top right */
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
   padding: 10px; /* Add padding */
   display: flex; /* Use flexbox for layout */
   justify-content: flex-start; /* Align buttons to the left */
   transition: background-color 0.3s; /* Smooth transition for background color */
 }
 
+#terminal.profile-mode #terminal-header {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
 /* Terminal header hover effect */
 #terminal-header:hover {
   background-color: #333333; /* Darken header background on hover */
+}
+
+#terminal.profile-mode #terminal-header:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Terminal buttons styles */
@@ -66,22 +102,27 @@ body {
 
 /* Terminal button hover effect */
 .terminal-button:hover {
-  background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent background on hover */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.2
+  ); /* Semi-transparent background on hover */
 }
 
 /* Close button styles */
 #close-button {
-  background-color: #FF5F57; /* Close button color */
+  background-color: #ff5f57; /* Close button color */
 }
 
 /* Minimize button styles */
 #minimize-button {
-  background-color: #FFBD2E; /* Minimize button color */
+  background-color: #ffbd2e; /* Minimize button color */
 }
 
 /* Maximize button styles */
 #maximize-button {
-  background-color: #28CA42; /* Maximize button color */
+  background-color: #28ca42; /* Maximize button color */
 }
 
 /* Terminal content styles */
@@ -90,19 +131,152 @@ body {
   height: calc(100% - 40px); /* Adjust for header height and padding */
   overflow-y: auto; /* Enable vertical scrolling if needed */
   user-select: none; /* Disable text selection */
+  position: relative;
 }
 
 /* Terminal text styles */
 #terminal-text {
   margin: 0;
   padding: 0;
-  font-size: 14px; /* Terminal text size */
-  line-height: 1.5; /* Line height */
+  font-size: 19px; /* Terminal text size */
+  line-height: 1.6; /* Line height */
   overflow: hidden; /* Hide overflow */
   white-space: pre-line; /* Preserve line breaks */
+  text-align: center;
+  transition: opacity 0.35s ease;
 }
 
-/* Video background styles */
+#terminal-hint {
+  margin: 18px 0 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+/* Hide the boot screen once we switch to profile mode */
+#terminal.profile-mode #terminal-text,
+#terminal.profile-mode #terminal-hint {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+/* ===================== Profile screen ===================== */
+#profile-view {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 52px 36px 34px;
+  color: #ffffff;
+  opacity: 0;
+  transform: scale(0.94);
+  transition:
+    opacity 0.5s ease 0.15s,
+    transform 0.5s ease 0.15s;
+  text-align: center;
+  pointer-events: none;
+}
+
+#terminal.profile-mode #profile-view {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+#avatar-ring {
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.55);
+  padding: 7px;
+  margin-bottom: 28px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+}
+
+#profile-picture {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  background: #111;
+}
+
+#profile-name {
+  font-size: 31px;
+  font-weight: 700;
+  margin: 0 0 10px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+#profile-role {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.65);
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 7px 18px;
+  margin-bottom: 28px;
+  display: inline-block;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  transition: background-color 0.3s;
+}
+
+#profile-role:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+#profile-bio {
+  font-size: 22px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 560px;
+  margin: 0 0 30px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Links styles */
+.links {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+}
+
+.links a {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  text-decoration: none;
+  transition:
+    background-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.links a i {
+  font-size: 26px;
+}
+
+/* Link hover effect */
+.links a:hover {
+  background-color: rgba(255, 0, 255, 0.35);
+  transform: translateY(-2px);
+}
+
+/* ===================== Background video ===================== */
 #video-background {
   position: fixed; /* Fixed position to cover the entire viewport */
   top: 0;
@@ -114,11 +288,17 @@ body {
 
 /* Scan lines effect */
 #video-background::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 100%;
   height: 100%;
-  background-image: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 0, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 2px);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.05) 0,
+    rgba(255, 255, 255, 0.05) 1px,
+    transparent 1px,
+    transparent 2px
+  );
   z-index: 1;
   pointer-events: none;
 }
@@ -150,102 +330,4 @@ body {
 .bottom-right {
   bottom: 0;
   right: 0;
-}
-
-/* Blurred box styles */
-#blurred-box {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 30%; /* Adjust width as needed */
-  height: 40%; /* Adjust height as needed */
-  background-color: rgba(255, 255, 255, 0); /* Transparent background */
-  border-radius: 20px; /* Rounded corners */
-  border: 2px solid rgba(255, 255, 255, 0); /* Dark border with transparency */
-  box-shadow: 0 0 10px rgba(100, 100, 100, 0.5); /* Slightly blurred shadow */
-  backdrop-filter: blur(5px); /* Apply blur effect */
-  z-index: 999; /* Above other content */
-  display: none; /* Initially hidden */
-  padding: 20px; /* Add padding */
-  text-align: center; /* Center text horizontally */
-  transition: background-color 0.3s; /* Smooth transition for background color */
-}
-
-/* Blurred box hover effect */
-#blurred-box:hover {
-  background-color: rgba(255, 255, 255, 0.05); /* Semi-transparent background on hover */
-}
-
-/* Profile picture styles */
-#blurred-box img {
-  width: 80px; /* Adjust size as needed */
-  height: 80px; /* Adjust size as needed */
-  border-radius: 50%; /* Rounded corners */
-  margin-bottom: 20px; /* Adjust margin as needed */
-}
-
-/* Links styles */
-.links {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  justify-content: center;
-  z-index: 1001; /* Ensure icons are above the blurred box */
-}
-
-.links a {
-  display: flex;
-  align-items: center;
-  margin: 0 10px;
-  color: #ffffff;
-  text-decoration: none;
-  transition: color 0.3s;
-}
-
-/* Link hover effect */
-.links a:hover {
-  color: #ff00ff;
-}
-
-.links a i {
-  margin-right: 5px;
-  font-size: 24px;
-}
-
-/* Hover styles for links */
-.links a:hover {
-  text-decoration: underline;
-}
-
-/* User Description styles */
-.user-description {
-  margin-bottom: 20px; /* Adjust margin as needed */
-}
-
-.user-description p {
-  margin: 0; /* Remove default margin */
-  padding: 10px; /* Add padding */
-  background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
-  border-radius: 5px; /* Rounded corners */
-  transition: background-color 0.3s; /* Smooth transition for background color */
-}
-
-/* User description hover effect */
-.user-description:hover p {
-  background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent background on hover */
-}
-
-#avatar-frame {
-  position: absolute; /* Overlay on top of the profile picture */
-  top: 15%; /* Adjust to move it higher (e.g., reduce from 50% to 40%) */
-  left: 50%; /* Center horizontally within #blurred-box */
-  transform: translate(-50%, -50%); /* Adjust for proper centering */
-  width: 15% ; /* Slightly larger than the profile picture */
-  height: 20%; /* Slightly larger than the profile picture */
-  z-index: 1000; /* Ensure it is above the profile picture */
-  pointer-events: none; /* Prevent interaction with the frame */
-  display: none; /* Initially hidden */
 }

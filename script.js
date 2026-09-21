@@ -2,9 +2,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // Get references to DOM elements
   var terminalContainer = document.getElementById("terminal");
   var terminalText = document.getElementById("terminal-text");
+  var terminalHint = document.getElementById("terminal-hint");
   var videoBackground = document.getElementById("myVideo");
-  var audioBackground = document.getElementById("myAudio");
-  var blurredBox = document.getElementById("blurred-box");
   var closeButton = document.getElementById("close-button");
 
   // Initial terminal text content
@@ -13,13 +12,12 @@ document.addEventListener("DOMContentLoaded", function () {
     "IP: Loading...",
     "System: Loading...", // System information placeholder
     "Bio Loaded",
-    "Press Enter To Continue",
   ];
   var currentIndex = 0;
+  var revealed = false; // whether we've already switched to the profile view
 
-  // Pause background video and audio
+  // Pause background video until the boot sequence is done
   videoBackground.pause();
-  //   audioBackground.pause();
 
   // Function to type out terminal text
   function typeWriter() {
@@ -33,13 +31,14 @@ document.addEventListener("DOMContentLoaded", function () {
       if (i < line.length) {
         terminalText.textContent += line.charAt(i);
         i++;
-        setTimeout(typeChar, 50);
+        setTimeout(typeChar, 15);
       } else {
         terminalText.textContent += "\n";
         currentIndex++;
         if (currentIndex < terminalTextContent.length + 1) {
           typeWriter();
         } else {
+          terminalHint.style.opacity = "1";
           addEventListeners(); // Add event listeners when typing is done
         }
       }
@@ -48,38 +47,41 @@ document.addEventListener("DOMContentLoaded", function () {
     typeChar();
   }
 
-  // Handle key press event or touch event
-  function handleInput() {
-    // Hide terminal, play background video and audio, and show blurred box
-    terminalContainer.style.display = "none";
+  // Reveal the profile view inside the SAME window (no new element)
+  function revealProfile() {
+    if (revealed) return;
+    revealed = true;
+
+    terminalHint.style.opacity = "0"; // clear the inline opacity so it doesn't leak into the profile screen
+    terminalContainer.classList.add("profile-mode");
     videoBackground.play();
-    audioBackground.play();
-    blurredBox.style.display = "block";
-    removeEventListeners(); // Remove event listeners after handling input
+
+    removeEventListeners(); // Enter/click no longer needed
   }
 
-  // Add event listeners for both key press and touch events
+  // Add event listeners for both key press and click/touch events
   function addEventListeners() {
     document.addEventListener("keydown", handleKeyPress);
-    terminalContainer.addEventListener("click", handleInput); // For touch support
+    terminalContainer.addEventListener("click", revealProfile); // For touch/click support
   }
 
   // Remove event listeners
   function removeEventListeners() {
     document.removeEventListener("keydown", handleKeyPress);
-    terminalContainer.removeEventListener("click", handleInput); // For touch support
+    terminalContainer.removeEventListener("click", revealProfile);
   }
 
   // Handle key press event
   function handleKeyPress(event) {
     if (event.key === "Enter") {
-      handleInput();
+      revealProfile();
     }
   }
 
   // Handle close button click event
-  closeButton.addEventListener("click", function () {
-    handleInput();
+  closeButton.addEventListener("click", function (event) {
+    event.stopPropagation(); // don't also trigger the window click handler
+    revealProfile();
   });
 
   // Fetch IP address using API
@@ -98,27 +100,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Extract system information from user agent
   var userAgent = navigator.userAgent;
-  var systemInfo;
 
   // Function to get the operating system name based on user agent
   function getOperatingSystem() {
     if (userAgent.match(/Windows/)) {
-      // Windows OS detected
       return getWindowsVersion();
     } else if (userAgent.match(/Macintosh/)) {
-      // macOS detected
       return getMacOSVersion();
     } else if (userAgent.match(/Linux/)) {
-      // Linux OS detected
       return "Linux";
     } else if (userAgent.match(/Android/)) {
-      // Android OS detected
       return getAndroidVersion();
     } else if (userAgent.match(/iPhone|iPad|iPod/)) {
-      // iOS detected
       return getiOSVersion();
     } else {
-      // Default to "Unknown" if system information cannot be determined
       return "Unknown";
     }
   }
@@ -140,9 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
         case "6.3":
           return "Windows 8.1";
         case "10.0":
-          return "Windows 10";
-        case "10.0":
-          return "Windows 11";
+          return "Windows 10 / 11";
         default:
           return "Windows";
       }
@@ -155,7 +148,6 @@ document.addEventListener("DOMContentLoaded", function () {
   function getMacOSVersion() {
     var version = userAgent.match(/Mac OS X ([\d_]+)/);
     if (version) {
-      // Replace underscores with dots for macOS version
       version = version[1].replace(/_/g, ".");
       return "macOS " + version;
     } else {
@@ -177,7 +169,6 @@ document.addEventListener("DOMContentLoaded", function () {
   function getiOSVersion() {
     var version = userAgent.match(/OS ([\d_]+)/);
     if (version) {
-      // Replace underscores with dots for iOS version
       version = version[1].replace(/_/g, ".");
       return "iOS " + version;
     } else {
@@ -188,22 +179,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // Get the operating system information
   var operatingSystem = getOperatingSystem();
   terminalTextContent[2] = "System: " + operatingSystem;
-
-  // Center the terminal window on the screen
-  function centerTerminal() {
-    var terminalWidth = terminalContainer.offsetWidth;
-    var terminalHeight = terminalContainer.offsetHeight;
-    var centerX = (window.innerWidth - terminalWidth) / 2;
-    var centerY = (window.innerHeight - terminalHeight) / 2;
-
-    terminalContainer.style.position = "absolute";
-    terminalContainer.style.left = centerX + "px";
-    terminalContainer.style.top = centerY + "px";
-  }
-
-  // Center the terminal initially and on window resize
-  centerTerminal();
-  window.addEventListener("resize", centerTerminal);
 
   // Center the ASCII art within the terminal window
   terminalText.style.textAlign = "center";
@@ -222,23 +197,4 @@ document.addEventListener("DOMContentLoaded", function () {
     ⠀⠀⠀⠈⠙⢿⣿⣿⣿⠿⠟⠛⠻⠿⣿⣿⣿⡿⠋⠀⠀⠀
   `;
   }
-
-  // Get the audio element
-  //   var audio = document.getElementById("myAudio");
-
-  // Set the maximum volume level (between 0 and 1)
-  //   var maxVolume = 0.1; // Adjust this value as needed
-
-  // Function to limit the volume
-  //   function limitVolume(volume) {
-  //     if (volume > maxVolume) {
-  //       audio.volume = maxVolume; // Set volume to the maximum allowed
-  //     } else {
-  //       audio.volume = volume; // Set volume to the provided value
-  //     }
-  //   }
-
-  // Example usage:
-  // Set volume to 0.7 (will be limited to maxVolume)
-  //   limitVolume(0.1);
 });
